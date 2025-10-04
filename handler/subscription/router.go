@@ -9,7 +9,7 @@ import (
 )
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
-	subRouter := router.PathPrefix("/sub").Subrouter()
+	subRouter := router.PathPrefix("/subs").Subrouter()
 
 	subRouter.Use(middleware.IsAuthenticatedMiddleware(h.BaseHandler))
 
@@ -18,6 +18,9 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 
 	// access: все
 	subRouter.Handle("", httpx.ErrorHandler(h.AddSubscriptions)).Methods(http.MethodPost)
+
+	// access: все
+	subRouter.Handle("/{id:[0-9]+}", httpx.ErrorHandler(h.GetSubscriptionById)).Methods(http.MethodGet)
 
 	// access: все
 	subRouter.Handle("/{id:[0-9]+}", httpx.ErrorHandler(h.EditSubscriptions)).Methods(http.MethodPut)

@@ -2,6 +2,7 @@ package httperr
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"net"
 	"net/http"
@@ -60,6 +61,14 @@ func Db(ctx context.Context, err error) *ServerError {
 
 	if errors.Is(err, context.Canceled) {
 		return Conflict(Err_ContextCanceled.Error())
+	}
+
+	if errors.Is(err, Err_DuplicateEmail) {
+		return Conflict(Err_DuplicateEmail.Error())
+	}
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return Conflict("empty")
 	}
 
 	var netErr net.Error

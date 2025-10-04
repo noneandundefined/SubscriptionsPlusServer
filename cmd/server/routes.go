@@ -3,8 +3,11 @@ package main
 import (
 	"net/http"
 	"subscriptionplus/server/handler"
+	"subscriptionplus/server/handler/admin"
 	"subscriptionplus/server/handler/auth"
+	"subscriptionplus/server/handler/plan"
 	"subscriptionplus/server/handler/subscription"
+	"subscriptionplus/server/handler/transaction"
 	"subscriptionplus/server/handler/user"
 	"subscriptionplus/server/middleware"
 
@@ -38,6 +41,12 @@ func (s *httpServer) routes() http.Handler {
 	subscription.NewHandler(baseHandler).RegisterRoutes(subrouter)
 	// user
 	user.NewHandler(baseHandler).RegisterRoutes(subrouter)
+	// admin
+	admin.NewHandler(baseHandler).RegisterRoutes(subrouter)
+	// transaction
+	transaction.NewHandler(baseHandler).RegisterRoutes(subrouter)
+	// plan
+	plan.NewHandler(baseHandler).RegisterRoutes(subrouter)
 
 	// docs
 	s.docs(subrouter)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"subscriptionplus/server/infra/logger"
 	"subscriptionplus/server/infra/store/postgres/models"
 	"subscriptionplus/server/pkg/httpx/httperr"
@@ -15,7 +16,58 @@ type SubscriptionStore struct {
 	logger *logger.Logger
 }
 
-func (s *SubscriptionStore) Get_SubscriptionsByUuid(ctx context.Context, uuid string) ([]models.Subscription, error) {
+func (s *SubscriptionStore) Get_SubscriptionById(ctx context.Context, id uint64, uuid string) (*models.Subscription, error) {
+	subscription := models.Subscription{}
+
+	query := `
+		SELECT * FROM subscriptions WHERE id = $1 AND user_uuid = $2
+	`
+
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	row := s.db.QueryRowContext(ctx, query, id, uuid)
+
+	if err := row.Scan(
+		&subscription.ID,
+		&subscription.CreatedAt,
+		&subscription.UpdatedAt,
+		&subscription.UserUUID,
+		&subscription.Name,
+		&subscription.Price,
+		&subscription.DatePay,
+		&subscription.DateNotifyOne,
+		&subscription.DateNotifyTwo,
+		&subscription.DateNotifyThree,
+	); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+
+	return &subscription, nil
+}
+
+func (s *SubscriptionStore) Create_Subscription(ctx context.Context, sub *models.Subscription) error {
+	query := `
+		INSERT INTO subscriptions (user_uuid, name, price, date_pay, date_notify_one, date_notify_two, date_notify_three)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
+	`
+
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	_, err := s.db.ExecContext(ctx, query, sub.UserUUID, sub.Name, sub.Price, sub.DatePay, sub.DateNotifyOne, sub.DateNotifyTwo, sub.DateNotifyThree)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *SubscriptionStore) Get_SubscriptionsByUuid(ctx context.Context, uuid, search string) (*[]models.Subscription, error) {
 	subscriptions := []models.Subscription{}
 
 	var limit sql.NullInt32
@@ -36,14 +88,25 @@ func (s *SubscriptionStore) Get_SubscriptionsByUuid(ctx context.Context, uuid st
 	query := `
 		SELECT * FROM subscriptions
 		WHERE user_uuid = $1
-		ORDER BY created_at DESC
-		LIMIT $2
 	`
+
+	args := []interface{}{uuid}
+	paramIndex := 2
+
+	if search != "" {
+		query += fmt.Sprintf(" AND name ILIKE $%d", paramIndex)
+		args = append(args, "%"+search+"%")
+		paramIndex++
+	}
+
+	query += fmt.Sprintf(" ORDER BY created_at DESC LIMIT $%d", paramIndex)
+
+	args = append(args, maxLimit)
 
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
-	rows, err := s.db.QueryContext(ctx, query, uuid, maxLimit)
+	rows, err := s.db.QueryContext(ctx, query, args...)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -80,24 +143,7 @@ func (s *SubscriptionStore) Get_SubscriptionsByUuid(ctx context.Context, uuid st
 		return nil, err
 	}
 
-	return subscriptions, nil
-}
-
-func (s *SubscriptionStore) Create_Subscription(ctx context.Context, sub *models.Subscription) error {
-	query := `
-		INSERT INTO subscriptions (user_uuid, name, price, date_pay, date_notify_one, date_notify_two, date_notify_three)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
-	`
-
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-	defer cancel()
-
-	_, err := s.db.ExecContext(ctx, query, sub.UserUUID, sub.Name, sub.Price, sub.DatePay, sub.DateNotifyOne, sub.DateNotifyTwo, sub.DateNotifyThree)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return &subscriptions, nil
 }
 
 func (s *SubscriptionStore) Update_SubscriptionById(ctx context.Context, sub *models.Subscription, id int) error {
@@ -120,6 +166,26 @@ func (s *SubscriptionStore) Update_SubscriptionById(ctx context.Context, sub *mo
 
 	if updAffected == 0 {
 		return httperr.Err_NotUpdated
+	}
+
+	return nil
+}
+
+func (s *SubscriptionStore) Update_SubscriptionsMounth(ctx context.Context) error {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	queries := []string{
+		"UPDATE subscriptions SET date_pay = date_pay + INTERVAL '1 month' WHERE date_pay <= CURRENT_DATE",
+		"UPDATE subscriptions SET date_notify_one = date_notify_one + INTERVAL '1 month' WHERE date_notify_one <= CURRENT_DATE",
+		"UPDATE subscriptions SET date_notify_two = date_notify_two + INTERVAL '1 month' WHERE date_notify_two <= CURRENT_DATE",
+		"UPDATE subscriptions SET date_notify_three = date_notify_three + INTERVAL '1 month' WHERE date_notify_three <= CURRENT_DATE",
+	}
+
+	for _, q := range queries {
+		if _, err := s.db.ExecContext(ctx, q); err != nil {
+			return err
+		}
 	}
 
 	return nil

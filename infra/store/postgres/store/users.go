@@ -163,27 +163,6 @@ func (s *UserStore) Get_UserMe(ctx context.Context, uuid string) (*models.UserMe
 	return &user, nil
 }
 
-func (s *UserStore) Delete_UserByUuid(ctx context.Context, uuid string) error {
-	query := `
-		DELETE FROM user_cores WHERE user_uuid = $1
-	`
-
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-	defer cancel()
-
-	del, err := s.db.ExecContext(ctx, query, uuid)
-	if err != nil {
-		return err
-	}
-
-	delRows, _ := del.RowsAffected()
-	if delRows == 0 {
-		return httperr.Err_NotDeleted
-	}
-
-	return nil
-}
-
 func (s *UserStore) Get_UserSubscriptionAdvancedByUuid(ctx context.Context, uuid string) (*models.UserSubscriptionAdvanced, error) {
 	user := models.UserSubscriptionAdvanced{}
 
@@ -224,4 +203,72 @@ func (s *UserStore) Get_UserSubscriptionAdvancedByUuid(ctx context.Context, uuid
 	}
 
 	return &user, nil
+}
+
+func (s *UserStore) Update_UserSubscriptionBeforPaySub(tx *sql.Tx, ctx context.Context, user *models.UserSubscription) error {
+	query := `
+		UPDATE user_subscriptions
+		SET
+			plan_id = $1,
+			start_date = NOW(),
+			end_date = NOW() + INTERVAL '1 month',
+			is_active = true
+		WHERE user_uuid = $2
+	`
+
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	upd, err := s.db.ExecContext(ctx, query, user.PlanID, user.UserUUID)
+	if err != nil {
+		return err
+	}
+
+	updAffected, err := upd.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if updAffected == 0 {
+		return httperr.Err_NotUpdated
+	}
+
+	return nil
+}
+
+func (s *UserStore) Update_UserSubscriptionBeforEndSub(ctx context.Context) error {
+	query := `
+		UPDATE user_subscriptions SET is_active = false
+        WHERE end_day < CURRENT_DATE AND is_active = true
+	`
+
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	if _, err := s.db.ExecContext(ctx, query); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *UserStore) Delete_UserByUuid(ctx context.Context, uuid string) error {
+	query := `
+		DELETE FROM user_cores WHERE user_uuid = $1
+	`
+
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	del, err := s.db.ExecContext(ctx, query, uuid)
+	if err != nil {
+		return err
+	}
+
+	delRows, _ := del.RowsAffected()
+	if delRows == 0 {
+		return httperr.Err_NotDeleted
+	}
+
+	return nil
 }

@@ -3,7 +3,7 @@ package subscription
 import "time"
 
 type SubscriptionAddPayload struct {
-	Name            string     `json:"name" validate:"required"`
+	Name            string     `json:"name" validate:"required,min=3"`
 	Price           float64    `json:"price" validate:"required"`
 	DatePay         time.Time  `json:"date_pay" validate:"required"`
 	DateNotifyOne   *time.Time `json:"date_notify_one,omitempty"`
@@ -12,7 +12,7 @@ type SubscriptionAddPayload struct {
 }
 
 type SubscriptionsEditPayload struct {
-	Name            string     `json:"name" validate:"required"`
+	Name            string     `json:"name" validate:"required,min=3"`
 	Price           float64    `json:"price" validate:"required"`
 	DatePay         time.Time  `json:"date_pay" validate:"required"`
 	DateNotifyOne   *time.Time `json:"date_notify_one,omitempty"`

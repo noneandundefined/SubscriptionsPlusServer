@@ -4,6 +4,7 @@ package middleware
 import (
 	"context"
 	"net/http"
+	"strings"
 	"subscriptionplus/server/handler"
 	"subscriptionplus/server/infra/types"
 	"subscriptionplus/server/pkg/httpx"
@@ -15,14 +16,32 @@ import (
 func IsAuthenticatedMiddleware(h *handler.BaseHandler) mux.MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			cookie, err := r.Cookie("auth-token")
-			if err != nil || cookie == nil {
+			var token string
+
+			// from header
+			authHeader := r.Header.Get("Authorization")
+			if authHeader != "" {
+				parts := strings.Split(authHeader, " ")
+				if len(parts) == 2 && strings.ToLower(parts[0]) == "bearer" {
+					token = parts[1]
+				}
+			}
+
+			// from cookie
+			if token == "" {
+				cookie, err := r.Cookie("auth-token")
+				if err == nil && cookie != nil {
+					token = cookie.Value
+				}
+			}
+
+			if token == "" {
 				httpx.HttpResponse(w, r, http.StatusUnauthorized, "please connect to account")
 				return
 			}
 
 			// db: get user core
-			user, err := h.Store.Users.Get_UserCoreByToken(r.Context(), cookie.Value)
+			user, err := h.Store.Users.Get_UserCoreByToken(r.Context(), token)
 			if err != nil {
 				httpx.HttpResponse(w, r, http.StatusUnauthorized, "please connect to account")
 				return

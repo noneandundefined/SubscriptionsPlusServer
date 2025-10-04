@@ -1,4 +1,4 @@
-package subscription
+package transaction
 
 import (
 	"net/http"
@@ -7,18 +7,16 @@ import (
 	"subscriptionplus/server/pkg/httpx/httperr"
 )
 
-func (h *Handler) GetSubscriptions(w http.ResponseWriter, r *http.Request) error {
+func (h *Handler) SubscriptionGetPending(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 	authToken := ctx.Value("identity").(*types.AuthToken)
 
-	search := r.URL.Query().Get("search")
-
-	subs, err := h.Store.Subscriptions.Get_SubscriptionsByUuid(ctx, authToken.User.UserUUID, search)
+	transactionPending, err := h.Store.Transactions.Get_TransactionPendingByUuid(ctx, authToken.User.UserUUID)
 	if err != nil {
 		h.Logger.Error("%v", err)
 		return httperr.Db(ctx, err)
 	}
 
-	httpx.HttpResponseWithETag(w, r, http.StatusOK, subs)
+	httpx.HttpResponse(w, r, http.StatusOK, transactionPending)
 	return nil
 }

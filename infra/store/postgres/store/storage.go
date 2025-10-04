@@ -18,15 +18,37 @@ type Storage struct {
 		Get_UserSubscriptionAdvancedByUuid(ctx context.Context, uuid string) (*models.UserSubscriptionAdvanced, error)
 		Get_UserMe(ctx context.Context, uuid string) (*models.UserMe, error)
 
+		Update_UserSubscriptionBeforPaySub(tx *sql.Tx, ctx context.Context, user *models.UserSubscription) error
+		Update_UserSubscriptionBeforEndSub(ctx context.Context) error
+
 		Delete_UserByUuid(ctx context.Context, uuid string) error
 	}
 	Subscriptions interface {
 		Create_Subscription(ctx context.Context, sub *models.Subscription) error
 
-		Get_SubscriptionsByUuid(ctx context.Context, uuid string) ([]models.Subscription, error)
+		Get_SubscriptionsByUuid(ctx context.Context, uuid string, search string) (*[]models.Subscription, error)
+		Get_SubscriptionById(ctx context.Context, id uint64, uuid string) (*models.Subscription, error)
 
+		Update_SubscriptionsMounth(ctx context.Context) error
 		Update_SubscriptionById(ctx context.Context, sub *models.Subscription, id int) error
 		Delete_SubscriptionById(ctx context.Context, id int, uuid string) error
+	}
+	Transactions interface {
+		Create_Transaction(ctx context.Context, transaction *models.Transaction) error
+
+		Get_TransactionsByUuid(ctx context.Context, uuid string) (*[]models.Transaction, error)
+		Get_TransactionPendingByUuid(ctx context.Context, uuid string) (*models.Transaction, error)
+		Get_TransactionsByStatus(ctx context.Context, status string) (*[]models.Transaction, error)
+		Get_TransactionsSubscriptionById(ctx context.Context, id uint64, uuid string) (*models.Transaction, error)
+
+		Update_TransactionStatusById(tx *sql.Tx, ctx context.Context, status string, id uint64) error
+
+		AutoActivateExpiredTransactions(ctx context.Context) error
+	}
+	Plans interface {
+		Get_Plans(ctx context.Context) (*[]models.Plan, error)
+		Get_PlanById(ctx context.Context, id uint64) (*models.Plan, error)
+		Get_PlanByUserSubUuid(ctx context.Context, uuid string) (*models.Plan, error)
 	}
 }
 
@@ -34,6 +56,8 @@ func NewStorage(db *sql.DB, logger *logger.Logger) Storage {
 	return Storage{
 		Users:         &UserStore{db, logger},
 		Subscriptions: &SubscriptionStore{db, logger},
+		Transactions:  &TransactionStore{db, logger},
+		Plans:         &PlanStore{db, logger},
 	}
 }
 

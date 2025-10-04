@@ -42,6 +42,11 @@ func main() {
 		store:  store,
 	}
 
+	// cron
+	server.startCronUpdSubscriptions()
+	server.startCronUpdUserSubscriptionBeforEndSub()
+	server.startCronAutoActivateExpiredTransactions()
+
 	// start http server
 	if err := server.httpStart(); err != nil {
 		log.Error(err.Error())
