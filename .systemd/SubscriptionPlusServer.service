@@ -1,0 +1,14 @@
+[Unit]
+Description=SubscriptionPlus Server
+After=network.target
+
+[Service]
+ExecStart=/root/SubscriptionsPlusServer/bin/SubscriptionPlusServer
+WorkingDirectory=/root/SubscriptionsPlusServer
+Restart=always
+User=root
+Group=root
+LimitNOFILE=1048576
+
+[Install]
+WantedBy=multi-user.target

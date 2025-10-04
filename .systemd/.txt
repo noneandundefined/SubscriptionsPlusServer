@@ -1,0 +1,9 @@
+sudo systemctl daemon-reload        # Перезагрузка systemd для применения изменений
+sudo systemctl start SubscriptionsPlusServer     # Запусков сервисов
+sudo systemctl enable SubscriptionsPlusServer    # Включение автозапуска при старте системы
+sudo systemctl status SubscriptionsPlusServer    # Проверяет статус сервиса
+
+journalctl -u SubscriptionsPlusServer -f   # Просмотр логов в реальном времени
+
+# redis
+sudo systemctl status redis
