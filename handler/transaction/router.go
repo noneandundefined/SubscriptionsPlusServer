@@ -20,7 +20,10 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	subscriptionPayRouter.Handle("/subscription/pay", httpx.ErrorHandler(h.SubscriptionPay)).Methods(http.MethodPost)
 
 	// access: все
-	subscriptionPayRouter.Handle("/subscription/{id:[0-9]+}", httpx.ErrorHandler(h.SubscriptionGetById)).Methods(http.MethodGet)
+	subscriptionPayRouter.Handle("/subscription/id/{id:[0-9]+}", httpx.ErrorHandler(h.SubscriptionGetById)).Methods(http.MethodGet)
+
+	// access: все
+	subscriptionPayRouter.Handle("/subscription/token/{xtoken}", httpx.ErrorHandler(h.SubscriptionGetByXToken)).Methods(http.MethodGet)
 
 	// access: все
 	subscriptionPayRouter.Handle("/subscriptions/pending", httpx.ErrorHandler(h.SubscriptionGetPending)).Methods(http.MethodGet)

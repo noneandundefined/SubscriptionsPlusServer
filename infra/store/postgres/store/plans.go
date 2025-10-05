@@ -54,6 +54,8 @@ func (s *PlanStore) Get_Plans(ctx context.Context) (*[]models.Plan, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		plans = append(plans, plan)
 	}
 
 	if err := rows.Err(); err != nil {

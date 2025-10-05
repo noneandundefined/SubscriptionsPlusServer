@@ -38,6 +38,7 @@ func (s *TransactionStore) Get_TransactionsByUuid(ctx context.Context, uuid stri
 	query := `
 		SELECT id, created_at, user_uuid, plan_id, x_token, amount, status FROM transactions
 		WHERE user_uuid = $1
+		ORDER BY created_at DESC
 	`
 
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
@@ -96,6 +97,7 @@ func (s *TransactionStore) Get_TransactionPendingByUuid(ctx context.Context, uui
 		&transaction.ID,
 		&transaction.CreatedAt,
 		&transaction.UpdatedAt,
+		&transaction.EndedAt,
 		&transaction.UserUUID,
 		&transaction.PlanID,
 		&transaction.XToken,
@@ -139,6 +141,7 @@ func (s *TransactionStore) Get_TransactionsByStatus(ctx context.Context, status 
 			&transaction.ID,
 			&transaction.CreatedAt,
 			&transaction.UpdatedAt,
+			&transaction.EndedAt,
 			&transaction.UserUUID,
 			&transaction.PlanID,
 			&transaction.XToken,
@@ -164,7 +167,7 @@ func (s *TransactionStore) Get_TransactionsSubscriptionById(ctx context.Context,
 	transaction := models.Transaction{}
 
 	query := `
-		SELECT id, created_at, plan_id, user_uuid, x_token, amount, status FROM transactions
+		SELECT id, created_at, ended_at, plan_id, user_uuid, x_token, amount, status FROM transactions
 		WHERE id = $1 AND user_uuid = $2
 		LIMIT 1
 	`
@@ -177,6 +180,41 @@ func (s *TransactionStore) Get_TransactionsSubscriptionById(ctx context.Context,
 	if err := row.Scan(
 		&transaction.ID,
 		&transaction.CreatedAt,
+		&transaction.EndedAt,
+		&transaction.PlanID,
+		&transaction.UserUUID,
+		&transaction.XToken,
+		&transaction.Amount,
+		&transaction.Status,
+	); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, err
+		}
+
+		return nil, err
+	}
+
+	return &transaction, nil
+}
+
+func (s *TransactionStore) Get_TransactionsSubscriptionByXToken(ctx context.Context, xtoken, uuid string) (*models.Transaction, error) {
+	transaction := models.Transaction{}
+
+	query := `
+		SELECT id, created_at, ended_at, plan_id, user_uuid, x_token, amount, status FROM transactions
+		WHERE x_token = $1 AND user_uuid = $2
+		LIMIT 1
+	`
+
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	row := s.db.QueryRowContext(ctx, query, xtoken, uuid)
+
+	if err := row.Scan(
+		&transaction.ID,
+		&transaction.CreatedAt,
+		&transaction.EndedAt,
 		&transaction.PlanID,
 		&transaction.UserUUID,
 		&transaction.XToken,

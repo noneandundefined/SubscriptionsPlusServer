@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     id SERIAL PRIMARY KEY,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    ended_at TIMESTAMP DEFAULT (NOW() + interval '1 hour'),
     user_uuid VARCHAR(255) NOT NULL REFERENCES user_cores(user_uuid) ON DELETE CASCADE,
     plan_id INTEGER NOT NULL DEFAULT 2 REFERENCES plans(id),
     x_token VARCHAR(255) NOT NULL,

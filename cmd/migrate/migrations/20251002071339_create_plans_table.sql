@@ -23,8 +23,8 @@ CREATE TRIGGER set_updated_at_trigger
     FOR EACH ROW
     EXECUTE FUNCTION set_updated_at_plans();
 
-INSERT INTO plans (name, price, auto_find_subscriptions) VALUES ('Sub Premium', 99.00, FALSE);
-INSERT INTO plans (name, max_total_subscriptions, auto_find_subscriptions) VALUES ('Sub Free', 10, TRUE);
+INSERT INTO plans (name, price, auto_find_subscriptions) VALUES ('Sub Premium', 99.00, TRUE);
+INSERT INTO plans (name, max_total_subscriptions, auto_find_subscriptions) VALUES ('Sub Free', 10, FALSE);
 
 COMMENT ON COLUMN plans.id IS 'Primary unique identifier';
 COMMENT ON COLUMN plans.created_at IS 'Record creation timestamp';

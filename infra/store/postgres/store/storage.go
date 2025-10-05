@@ -40,6 +40,7 @@ type Storage struct {
 		Get_TransactionPendingByUuid(ctx context.Context, uuid string) (*models.Transaction, error)
 		Get_TransactionsByStatus(ctx context.Context, status string) (*[]models.Transaction, error)
 		Get_TransactionsSubscriptionById(ctx context.Context, id uint64, uuid string) (*models.Transaction, error)
+		Get_TransactionsSubscriptionByXToken(ctx context.Context, xtoken, uuid string) (*models.Transaction, error)
 
 		Update_TransactionStatusById(tx *sql.Tx, ctx context.Context, status string, id uint64) error
 

@@ -238,7 +238,10 @@ func (s *UserStore) Update_UserSubscriptionBeforPaySub(tx *sql.Tx, ctx context.C
 
 func (s *UserStore) Update_UserSubscriptionBeforEndSub(ctx context.Context) error {
 	query := `
-		UPDATE user_subscriptions SET is_active = false
+		UPDATE user_subscriptions
+		SET
+			is_active = false,
+			plan_id = 2
         WHERE end_day < CURRENT_DATE AND is_active = true
 	`
 
