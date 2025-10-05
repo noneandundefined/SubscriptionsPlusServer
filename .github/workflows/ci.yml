@@ -20,12 +20,12 @@ jobs:
 
                       cd ./SubscriptionsPlusServer
 
+                      git stash || true
+                      git pull origin main
+
                       export DB_URL=${{ secrets.PROD_DB_URL }}
 
                       make migrate-up
-
-                      git stash
-                      git pull origin main
 
                       cd ./scripts
                       bash pre_deploy
