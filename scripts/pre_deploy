@@ -49,13 +49,6 @@ else
 fi
 
 cd "$HOME"
-for file in $(find . -type f -name "*.go"); do
-    if grep -q "fmt.Println" "$file" || grep -q "fmt.Print" "$file"; then
-        echo -e "${RED}Warning: Find used fmt.Println or fmt.Print in file: $file${NC}"
-    fi
-done
-
-cd "$HOME"
 # Используем sed для замены 'Load()' на 'Load(".env.production")'
 echo -e "${BLUE}Замена Load() на Load(".env.production")${NC}"
 if sed -i.bak 's/godotenv.Load()/godotenv.Load(".env.production")/' "$HOME/$FILE_GO_HTTP"; then
