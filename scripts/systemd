@@ -43,7 +43,7 @@ else
     echo -e "Golang already install."
 fi
 
-cd "$HOME/SubscriptionPlusServer"
+cd "$HOME/SubscriptionsPlusServer"
 make build
 
 sudo cp "$HOME/.systemd/SubscriptionPlusServer.service" /etc/systemd/system/
