@@ -28,13 +28,13 @@ jobs:
             - name: Build http server binary (Windows)
               run: |
                   GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -trimpath -o ./bin/SubscriptionPlusServer-Win ./cmd/server
-                  upx --best --lzma ./bin/http-win-x64
+                  upx --best --lzma ./bin/SubscriptionPlusServer-Win
 
             - name: Build http server binary (Linux)
               run: |
                   sudo apt-get update && sudo apt-get install upx -y
                   go build -ldflags="-s -w" -trimpath -o ./bin/SubscriptionPlusServer ./cmd/server
-                  upx --best --lzma ./bin/http
+                  upx --best --lzma ./bin/SubscriptionPlusServer
 
             - name: Get current date
               id: date
