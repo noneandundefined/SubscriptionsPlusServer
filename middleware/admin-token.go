@@ -12,7 +12,7 @@ import (
 func AdminTokenMiddleware(h *handler.BaseHandler) mux.MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			token := r.Header.Get("X-API-Token")
+			token := r.Header.Get("X-Admin-API-Token")
 
 			if token != os.Getenv("ADMIN_API_TOKEN") {
 				httpx.HttpResponse(w, r, http.StatusForbidden, "invalid API token")

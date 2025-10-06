@@ -23,6 +23,8 @@ func (s *httpServer) routes() http.Handler {
 	router.Use(middleware.RecoveryMiddleware())
 	// middleware for security API
 	router.Use(middleware.SecurityMiddleware())
+	// middleware for logging API request
+	router.Use(middleware.ApiTokenMiddleware())
 	// middleware rate limiter
 	router.Use(middleware.RateLimiterMiddleware(6, 10))
 
