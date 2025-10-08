@@ -58,6 +58,22 @@ func (h *Handler) AddSubscriptions(w http.ResponseWriter, r *http.Request) error
 		}
 	}
 
+	userSubscription, err := h.Store.Users.Get_UserSubscriptionAdvancedByUuid(ctx, authToken.User.UserUUID)
+	if err != nil {
+		h.Logger.Error("%v", err)
+		return httperr.Db(ctx, err)
+	}
+
+	subscriptions, err := h.Store.Subscriptions.Get_SubscriptionsByUuid(ctx, authToken.User.UserUUID, "")
+	if err != nil {
+		h.Logger.Error("%v", err)
+		return httperr.Db(ctx, err)
+	}
+
+	if userSubscription.MaxTotalSubscriptions != nil && len(*subscriptions) >= *userSubscription.MaxTotalSubscriptions {
+		return httperr.BadRequest("you have reached the subscription limit in Sub Free")
+	}
+
 	sub := &models.Subscription{
 		UserUUID:        authToken.User.UserUUID,
 		Name:            payload.Name,
