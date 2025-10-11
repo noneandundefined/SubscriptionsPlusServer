@@ -1,9 +1,9 @@
 [Unit]
-Description=SubscriptionPlus Server
+Description=SubscriptionPlus Reserv Server
 After=network.target
 
 [Service]
-ExecStart=/root/SubscriptionsPlusServer/bin/SubscriptionPlusServer
+ExecStart=/root/SubscriptionsPlusServer/bin/SubscriptionPlusReservServer
 WorkingDirectory=/root/SubscriptionsPlusServer
 Restart=always
 RestartSec=5s

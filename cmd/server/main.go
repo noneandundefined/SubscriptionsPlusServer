@@ -11,6 +11,8 @@ import (
 	"github.com/joho/godotenv"
 )
 
+var DefaultPortStr string = "8080"
+
 type httpServer struct {
 	db     *sql.DB
 	logger *logger.Logger

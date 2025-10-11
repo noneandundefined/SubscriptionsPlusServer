@@ -47,13 +47,20 @@ cd "$HOME"
 make build
 
 sudo cp "$HOME/.systemd/SubscriptionPlusServer.service" /etc/systemd/system/
+sudo cp "$HOME/.systemd/SubscriptionPlusReservServer.service" /etc/systemd/system/
 
 sudo systemctl stop SubscriptionPlusServer.service
+sudo systemctl stop SubscriptionPlusReservServer.service
 
 sudo systemctl daemon-reload
 
 sudo systemctl start SubscriptionPlusServer.service
+sudo systemctl start SubscriptionPlusReservServer.service
+
 sudo systemctl status SubscriptionPlusServer.service
+sudo systemctl status SubscriptionPlusReservServer.service
+
 sudo systemctl enable SubscriptionPlusServer.service
+sudo systemctl enable SubscriptionPlusReservServer.service
 
 echo -e "${GREEN}Successful creation and launch of systemd services!${NC}"

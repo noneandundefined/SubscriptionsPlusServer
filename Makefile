@@ -1,6 +1,10 @@
 DB_URL ?= postgres://postgres:password@localhost:5432/subscriptionplus?sslmode=disable
 MIGRATIONS_DIR ?= cmd/migrate/migrations
 
+PORT ?= 8080
+BINARY_MAIN := bin/SubscriptionPlusServer
+BINARY_RESERV := bin/SubscriptionPlusReservServer
+
 GOOSE ?= goose
 
 .PHONY: fmt lint check build-clean build test migrate-create migrate-up migrate-down
@@ -16,14 +20,20 @@ check: fmt lint test
 	@echo "==> All checks passed!"
 
 build:
-	@echo "==> Running build..."
-	@go build -ldflags="-s -w" -o bin/SubscriptionPlusServer ./cmd/server
+	@echo "==> Building main server (8080)..."
+	go build -ldflags="-s -w -X main.DefaultPortStr=8080" -o $(BINARY_MAIN) ./cmd/server
+
+	@echo "==> Building backup server (8181)..."
+	go build -ldflags="-s -w -X main.DefaultPortStr=8181" -o $(BINARY_RESERV) ./cmd/server
 
 test:
 	@go test -v ./...
 
 run: build
 	@./bin/SubscriptionPlusServer
+
+run-reserv: build
+	@./bin/SubscriptionPlusReservServer
 
 run-to-test:
 	@cmd /c "$(CURDIR)/$(BATCH_FILE_TEST)"
