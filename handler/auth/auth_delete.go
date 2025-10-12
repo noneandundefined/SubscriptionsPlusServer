@@ -7,7 +7,7 @@ import (
 	"subscriptionplus/server/pkg/httpx/httperr"
 )
 
-func (h *Handler) AuthDelete(w http.ResponseWriter, r *http.Request) error {
+func (h *Handler) AuthDeleteHandler(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 	authToken := ctx.Value("identity").(*types.AuthToken)
 

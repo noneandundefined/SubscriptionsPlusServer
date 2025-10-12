@@ -36,7 +36,16 @@ func (s *TransactionStore) Get_TransactionsByUuid(ctx context.Context, uuid stri
 	transactions := []models.Transaction{}
 
 	query := `
-		SELECT id, created_at, user_uuid, plan_id, x_token, amount, status FROM transactions
+		SELECT 
+		    id, 
+		    created_at, 
+		    user_uuid, 
+		    plan_id, 
+		    status, 
+		    x_token, 
+		   	amount, 
+		    currency
+		FROM transactions
 		WHERE user_uuid = $1
 		ORDER BY created_at DESC
 	`
@@ -62,9 +71,10 @@ func (s *TransactionStore) Get_TransactionsByUuid(ctx context.Context, uuid stri
 			&transaction.CreatedAt,
 			&transaction.UserUUID,
 			&transaction.PlanID,
+			&transaction.Status,
 			&transaction.XToken,
 			&transaction.Amount,
-			&transaction.Status,
+			&transaction.Currency,
 		)
 
 		if err != nil {
@@ -97,12 +107,12 @@ func (s *TransactionStore) Get_TransactionPendingByUuid(ctx context.Context, uui
 		&transaction.ID,
 		&transaction.CreatedAt,
 		&transaction.UpdatedAt,
-		&transaction.EndedAt,
 		&transaction.UserUUID,
 		&transaction.PlanID,
+		&transaction.Status,
 		&transaction.XToken,
 		&transaction.Amount,
-		&transaction.Status,
+		&transaction.Currency,
 	); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -141,12 +151,12 @@ func (s *TransactionStore) Get_TransactionsByStatus(ctx context.Context, status 
 			&transaction.ID,
 			&transaction.CreatedAt,
 			&transaction.UpdatedAt,
-			&transaction.EndedAt,
 			&transaction.UserUUID,
 			&transaction.PlanID,
+			&transaction.Status,
 			&transaction.XToken,
 			&transaction.Amount,
-			&transaction.Status,
+			&transaction.Currency,
 		)
 
 		if err != nil {
@@ -167,7 +177,16 @@ func (s *TransactionStore) Get_TransactionsSubscriptionById(ctx context.Context,
 	transaction := models.Transaction{}
 
 	query := `
-		SELECT id, created_at, ended_at, plan_id, user_uuid, x_token, amount, status FROM transactions
+		SELECT 
+		    id, 
+		    created_at, 
+		    plan_id,
+		    status,
+		    user_uuid, 
+		    x_token, 
+		    amount,
+		    currency
+		FROM transactions
 		WHERE id = $1 AND user_uuid = $2
 		LIMIT 1
 	`
@@ -180,12 +199,12 @@ func (s *TransactionStore) Get_TransactionsSubscriptionById(ctx context.Context,
 	if err := row.Scan(
 		&transaction.ID,
 		&transaction.CreatedAt,
-		&transaction.EndedAt,
 		&transaction.PlanID,
+		&transaction.Status,
 		&transaction.UserUUID,
 		&transaction.XToken,
 		&transaction.Amount,
-		&transaction.Status,
+		&transaction.Currency,
 	); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, err
@@ -201,7 +220,16 @@ func (s *TransactionStore) Get_TransactionsSubscriptionByXToken(ctx context.Cont
 	transaction := models.Transaction{}
 
 	query := `
-		SELECT id, created_at, ended_at, plan_id, user_uuid, x_token, amount, status FROM transactions
+		SELECT 
+		    id, 
+		    created_at, 
+		    plan_id,
+		    status,
+		    user_uuid, 
+		    x_token, 
+		    amount,
+		    currency
+		FROM transactions
 		WHERE x_token = $1 AND user_uuid = $2
 		LIMIT 1
 	`
@@ -214,12 +242,12 @@ func (s *TransactionStore) Get_TransactionsSubscriptionByXToken(ctx context.Cont
 	if err := row.Scan(
 		&transaction.ID,
 		&transaction.CreatedAt,
-		&transaction.EndedAt,
 		&transaction.PlanID,
+		&transaction.Status,
 		&transaction.UserUUID,
 		&transaction.XToken,
 		&transaction.Amount,
-		&transaction.Status,
+		&transaction.Currency,
 	); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, err

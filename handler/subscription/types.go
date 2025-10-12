@@ -9,6 +9,7 @@ type SubscriptionAddPayload struct {
 	DateNotifyOne   *time.Time `json:"date_notify_one,omitempty"`
 	DateNotifyTwo   *time.Time `json:"date_notify_two,omitempty"`
 	DateNotifyThree *time.Time `json:"date_notify_three,omitempty"`
+	AutoRenewal     bool       `json:"auto_renewal" validate:"required"`
 }
 
 type SubscriptionsEditPayload struct {
@@ -18,4 +19,5 @@ type SubscriptionsEditPayload struct {
 	DateNotifyOne   *time.Time `json:"date_notify_one,omitempty"`
 	DateNotifyTwo   *time.Time `json:"date_notify_two,omitempty"`
 	DateNotifyThree *time.Time `json:"date_notify_three,omitempty"`
+	AutoRenewal     bool       `json:"auto_renewal" validate:"required"`
 }

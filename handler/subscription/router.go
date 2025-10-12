@@ -10,21 +10,25 @@ import (
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	subRouter := router.PathPrefix("/subs").Subrouter()
+	subFreeRouter := router.PathPrefix("/subs").Subrouter()
 
 	subRouter.Use(middleware.IsAuthenticatedMiddleware(h.BaseHandler))
 
 	// access: все
-	subRouter.Handle("", httpx.ErrorHandler(h.GetSubscriptions)).Methods(http.MethodGet)
+	subRouter.Handle("", httpx.ErrorHandler(h.GetSubscriptionsHandler)).Methods(http.MethodGet)
 
 	// access: все
-	subRouter.Handle("", httpx.ErrorHandler(h.AddSubscriptions)).Methods(http.MethodPost)
+	subRouter.Handle("", httpx.ErrorHandler(h.AddSubscriptionsHandler)).Methods(http.MethodPost)
 
 	// access: все
-	subRouter.Handle("/{id:[0-9]+}", httpx.ErrorHandler(h.GetSubscriptionById)).Methods(http.MethodGet)
+	subRouter.Handle("/{id:[0-9]+}", httpx.ErrorHandler(h.GetSubscriptionByIdHandler)).Methods(http.MethodGet)
 
 	// access: все
-	subRouter.Handle("/{id:[0-9]+}", httpx.ErrorHandler(h.EditSubscriptions)).Methods(http.MethodPut)
+	subRouter.Handle("/{id:[0-9]+}", httpx.ErrorHandler(h.EditSubscriptionsHandler)).Methods(http.MethodPut)
 
 	// access: все
-	subRouter.Handle("/{id:[0-9]+}", httpx.ErrorHandler(h.DeleteSubscriptions)).Methods(http.MethodDelete)
+	subRouter.Handle("/{id:[0-9]+}", httpx.ErrorHandler(h.DeleteSubscriptionsHandler)).Methods(http.MethodDelete)
+
+	// access: все
+	subFreeRouter.Handle("/images/w350/{logo}", httpx.ErrorHandler(h.GetSubscriptionLogoHandler)).Methods(http.MethodGet)
 }

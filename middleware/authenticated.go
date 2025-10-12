@@ -41,8 +41,10 @@ func IsAuthenticatedMiddleware(h *handler.BaseHandler) mux.MiddlewareFunc {
 			}
 
 			// db: get user core
-			user, err := h.Store.Users.Get_UserCoreByToken(r.Context(), token)
+			user, err := h.Store.Users.Get_UserInfoByAccessToken(r.Context(), token)
 			if err != nil {
+				h.Logger.Error("%v", err)
+
 				httpx.HttpResponse(w, r, http.StatusUnauthorized, "please connect to account")
 				return
 			}

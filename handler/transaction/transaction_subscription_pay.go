@@ -11,7 +11,7 @@ import (
 	"github.com/go-playground/validator"
 )
 
-func (h *Handler) SubscriptionPay(w http.ResponseWriter, r *http.Request) error {
+func (h *Handler) SubscriptionPayHandler(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 	authToken := ctx.Value("identity").(*types.AuthToken)
 

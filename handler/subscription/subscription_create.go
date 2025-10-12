@@ -12,7 +12,7 @@ import (
 	"github.com/go-playground/validator"
 )
 
-func (h *Handler) AddSubscriptions(w http.ResponseWriter, r *http.Request) error {
+func (h *Handler) AddSubscriptionsHandler(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 	authToken := ctx.Value("identity").(*types.AuthToken)
 
@@ -58,10 +58,8 @@ func (h *Handler) AddSubscriptions(w http.ResponseWriter, r *http.Request) error
 		}
 	}
 
-	userSubscription, err := h.Store.Users.Get_UserSubscriptionAdvancedByUuid(ctx, authToken.User.UserUUID)
-	if err != nil {
-		h.Logger.Error("%v", err)
-		return httperr.Db(ctx, err)
+	if !authToken.User.AutoRenewalSubscriptions && payload.AutoRenewal {
+		return httperr.BadRequest("auto-renewal is available only for Premium users")
 	}
 
 	subscriptions, err := h.Store.Subscriptions.Get_SubscriptionsByUuid(ctx, authToken.User.UserUUID, "")
@@ -70,7 +68,7 @@ func (h *Handler) AddSubscriptions(w http.ResponseWriter, r *http.Request) error
 		return httperr.Db(ctx, err)
 	}
 
-	if userSubscription.MaxTotalSubscriptions != nil && len(*subscriptions) >= *userSubscription.MaxTotalSubscriptions {
+	if authToken.User.MaxTotalSubscriptions != nil && len(*subscriptions) >= *authToken.User.MaxTotalSubscriptions {
 		return httperr.BadRequest("you have reached the subscription limit in Sub Free")
 	}
 
@@ -82,6 +80,7 @@ func (h *Handler) AddSubscriptions(w http.ResponseWriter, r *http.Request) error
 		DateNotifyOne:   payload.DateNotifyOne,
 		DateNotifyTwo:   payload.DateNotifyTwo,
 		DateNotifyThree: payload.DateNotifyThree,
+		AutoRenewal:     payload.AutoRenewal,
 	}
 
 	if err := h.Store.Subscriptions.Create_Subscription(ctx, sub); err != nil {

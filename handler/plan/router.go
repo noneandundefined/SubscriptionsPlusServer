@@ -11,5 +11,5 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	planRouter := router.PathPrefix("/plans").Subrouter()
 
 	// access: все
-	planRouter.Handle("", httpx.ErrorHandler(h.PlansGet)).Methods(http.MethodGet)
+	planRouter.Handle("", httpx.ErrorHandler(h.GetPlansHandler)).Methods(http.MethodGet)
 }

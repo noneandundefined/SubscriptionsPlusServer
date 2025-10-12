@@ -12,7 +12,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func (h *Handler) SubscriptionsPatchById(w http.ResponseWriter, r *http.Request) error {
+func (h *Handler) SubscriptionsPatchByIdHandler(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 
 	idParam := mux.Vars(r)["id"]

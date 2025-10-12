@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS subscriptions (
     date_pay DATE NOT NULL,
     date_notify_one DATE,
     date_notify_two DATE,
-    date_notify_three DATE
+    date_notify_three DATE,
+    auto_renewal NOT NULL DEFAULT FALSE
 );
 
 CREATE OR REPLACE FUNCTION set_sub_updated_at()

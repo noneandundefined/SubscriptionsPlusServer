@@ -6,7 +6,7 @@ import (
 	"subscriptionplus/server/pkg/httpx/httperr"
 )
 
-func (h *Handler) SubscriptionsPending(w http.ResponseWriter, r *http.Request) error {
+func (h *Handler) SubscriptionsPendingHandler(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 
 	subs, err := h.Store.Transactions.Get_TransactionsByStatus(ctx, "pending")

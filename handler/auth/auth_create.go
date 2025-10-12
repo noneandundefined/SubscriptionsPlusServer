@@ -2,6 +2,7 @@ package auth
 
 import (
 	"fmt"
+	"subscriptionplus/server/infra/constants"
 
 	"net/http"
 	"subscriptionplus/server/infra/store/postgres/models"
@@ -49,9 +50,9 @@ func (h *Handler) AuthCreateUserHandler(w http.ResponseWriter, r *http.Request) 
 	uuid := uuid.NewString()
 
 	userCore := &models.UserCore{
-		UserUUID: uuid,
-		Email:    payload.Email,
-		Token:    token,
+		UserUUID:    uuid,
+		Email:       payload.Email,
+		AccessToken: token,
 	}
 
 	if errUserCore := h.Store.Users.Create_UserCore(ctx, tx, userCore); errUserCore != nil {
@@ -61,11 +62,16 @@ func (h *Handler) AuthCreateUserHandler(w http.ResponseWriter, r *http.Request) 
 
 	userSubscriptionModel := &models.UserSubscription{
 		UserUUID: uuid,
-		PlanID:   2,
+		PlanID:   constants.Free_Index,
 		IsActive: false,
 	}
 
 	if err := h.Store.Users.Create_UserSubscription(ctx, tx, userSubscriptionModel); err != nil {
+		h.Logger.Error("%v", err)
+		return httperr.Db(ctx, err)
+	}
+
+	if err := h.Store.Users.Create_UserUsage(ctx, tx, uuid); err != nil {
 		h.Logger.Error("%v", err)
 		return httperr.Db(ctx, err)
 	}

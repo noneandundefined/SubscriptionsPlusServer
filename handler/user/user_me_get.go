@@ -7,7 +7,7 @@ import (
 	"subscriptionplus/server/pkg/httpx/httperr"
 )
 
-func (h *Handler) GetMe(w http.ResponseWriter, r *http.Request) error {
+func (h *Handler) GetMeHandler(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 	authToken := ctx.Value("identity").(*types.AuthToken)
 

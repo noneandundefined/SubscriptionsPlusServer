@@ -23,15 +23,6 @@ CREATE TRIGGER set_updated_at_trigger
     BEFORE UPDATE ON user_subscriptions
     FOR EACH ROW
     EXECUTE FUNCTION set_updated_at_user_subscriptions();
-
-COMMENT ON COLUMN user_subscriptions.id IS 'Primary unique identifier of user subscription';
-COMMENT ON COLUMN user_subscriptions.created_at IS 'Record creation timestamp';
-COMMENT ON COLUMN user_subscriptions.updated_at IS 'Record last update timestamp';
-COMMENT ON COLUMN user_subscriptions.user_uuid IS 'User UUID from user_cores';
-COMMENT ON COLUMN user_subscriptions.plan_id IS 'Linked plan id (from plans table)';
-COMMENT ON COLUMN user_subscriptions.start_date IS 'Subscription start date';
-COMMENT ON COLUMN user_subscriptions.end_date IS 'Subscription end date';
-COMMENT ON COLUMN user_subscriptions.is_active IS 'Subscription status (true = active, false = inactive)';
 -- +goose StatementEnd
 
 -- +goose Down

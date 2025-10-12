@@ -14,8 +14,8 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	adminRouter.Use(middleware.AdminTokenMiddleware(h.BaseHandler))
 
 	// access: все
-	adminRouter.Handle("/transactions/subscriptions/pending", httpx.ErrorHandler(h.SubscriptionsPending)).Methods(http.MethodGet)
+	adminRouter.Handle("/transactions/subscriptions/pending", httpx.ErrorHandler(h.SubscriptionsPendingHandler)).Methods(http.MethodGet)
 
 	// access: все
-	adminRouter.Handle("/transactions/subscriptions/{id:[0-9]+}", httpx.ErrorHandler(h.SubscriptionsPatchById)).Methods(http.MethodPatch)
+	adminRouter.Handle("/transactions/subscriptions/{id:[0-9]+}", httpx.ErrorHandler(h.SubscriptionsPatchByIdHandler)).Methods(http.MethodPatch)
 }

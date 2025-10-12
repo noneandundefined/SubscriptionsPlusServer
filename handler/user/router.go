@@ -14,5 +14,5 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	userRouter.Use(middleware.IsAuthenticatedMiddleware(h.BaseHandler))
 
 	// access: все
-	userRouter.Handle("/me", httpx.ErrorHandler(h.GetMe)).Methods(http.MethodGet)
+	userRouter.Handle("/me", httpx.ErrorHandler(h.GetMeHandler)).Methods(http.MethodGet)
 }

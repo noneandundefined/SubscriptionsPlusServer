@@ -6,7 +6,7 @@ import (
 	"subscriptionplus/server/pkg/httpx/httperr"
 )
 
-func (h *Handler) PlansGet(w http.ResponseWriter, r *http.Request) error {
+func (h *Handler) GetPlansHandler(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 
 	plans, err := h.Store.Plans.Get_Plans(ctx)

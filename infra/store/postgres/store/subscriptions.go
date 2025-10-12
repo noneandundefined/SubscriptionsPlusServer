@@ -16,6 +16,23 @@ type SubscriptionStore struct {
 	logger *logger.Logger
 }
 
+func (s *SubscriptionStore) Create_Subscription(ctx context.Context, sub *models.Subscription) error {
+	query := `
+		INSERT INTO subscriptions (user_uuid, name, price, date_pay, date_notify_one, date_notify_two, date_notify_three, auto_renewal)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+	`
+
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	_, err := s.db.ExecContext(ctx, query, sub.UserUUID, sub.Name, sub.Price, sub.DatePay, sub.DateNotifyOne, sub.DateNotifyTwo, sub.DateNotifyThree, sub.AutoRenewal)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *SubscriptionStore) Get_SubscriptionById(ctx context.Context, id uint64, uuid string) (*models.Subscription, error) {
 	subscription := models.Subscription{}
 
@@ -39,6 +56,7 @@ func (s *SubscriptionStore) Get_SubscriptionById(ctx context.Context, id uint64,
 		&subscription.DateNotifyOne,
 		&subscription.DateNotifyTwo,
 		&subscription.DateNotifyThree,
+		&subscription.AutoRenewal,
 	); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
@@ -48,23 +66,6 @@ func (s *SubscriptionStore) Get_SubscriptionById(ctx context.Context, id uint64,
 	}
 
 	return &subscription, nil
-}
-
-func (s *SubscriptionStore) Create_Subscription(ctx context.Context, sub *models.Subscription) error {
-	query := `
-		INSERT INTO subscriptions (user_uuid, name, price, date_pay, date_notify_one, date_notify_two, date_notify_three)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
-	`
-
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-	defer cancel()
-
-	_, err := s.db.ExecContext(ctx, query, sub.UserUUID, sub.Name, sub.Price, sub.DatePay, sub.DateNotifyOne, sub.DateNotifyTwo, sub.DateNotifyThree)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (s *SubscriptionStore) Get_SubscriptionsByUuid(ctx context.Context, uuid, search string) (*[]models.Subscription, error) {
@@ -130,6 +131,7 @@ func (s *SubscriptionStore) Get_SubscriptionsByUuid(ctx context.Context, uuid, s
 			&sub.DateNotifyOne,
 			&sub.DateNotifyTwo,
 			&sub.DateNotifyThree,
+			&sub.AutoRenewal,
 		)
 
 		if err != nil {
@@ -148,13 +150,22 @@ func (s *SubscriptionStore) Get_SubscriptionsByUuid(ctx context.Context, uuid, s
 
 func (s *SubscriptionStore) Update_SubscriptionById(ctx context.Context, sub *models.Subscription, id int) error {
 	query := `
-		UPDATE subscriptions SET name = $1, price = $2, date_pay = $3, date_notify_one = $4, date_notify_two = $5, date_notify_three = $6 WHERE id = $7 AND user_uuid = $8
+		UPDATE subscriptions 
+		SET 
+		    name = $1, 
+		    price = $2, 
+		    date_pay = $3, 
+		    date_notify_one = $4, 
+		    date_notify_two = $5, 
+		    date_notify_three = $6, 
+		    auto_renewal = $7 
+		WHERE id = $8 AND user_uuid = $9
 	`
 
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
-	upd, err := s.db.ExecContext(ctx, query, sub.Name, sub.Price, sub.DatePay, sub.DateNotifyOne, sub.DateNotifyTwo, sub.DateNotifyThree, id, sub.UserUUID)
+	upd, err := s.db.ExecContext(ctx, query, sub.Name, sub.Price, sub.DatePay, sub.DateNotifyOne, sub.DateNotifyTwo, sub.DateNotifyThree, sub.AutoRenewal, id, sub.UserUUID)
 	if err != nil {
 		return err
 	}
@@ -176,10 +187,10 @@ func (s *SubscriptionStore) Update_SubscriptionsMounth(ctx context.Context) erro
 	defer cancel()
 
 	queries := []string{
-		"UPDATE subscriptions SET date_pay = date_pay + INTERVAL '1 month' WHERE date_pay <= CURRENT_DATE",
-		"UPDATE subscriptions SET date_notify_one = date_notify_one + INTERVAL '1 month' WHERE date_notify_one <= CURRENT_DATE",
-		"UPDATE subscriptions SET date_notify_two = date_notify_two + INTERVAL '1 month' WHERE date_notify_two <= CURRENT_DATE",
-		"UPDATE subscriptions SET date_notify_three = date_notify_three + INTERVAL '1 month' WHERE date_notify_three <= CURRENT_DATE",
+		"UPDATE subscriptions SET date_pay = date_pay + INTERVAL '1 month' WHERE date_pay <= CURRENT_DATE AND auto_renewal = TRUE",
+		"UPDATE subscriptions SET date_notify_one = date_notify_one + INTERVAL '1 month' WHERE date_notify_one <= CURRENT_DATE AND auto_renewal = TRUE",
+		"UPDATE subscriptions SET date_notify_two = date_notify_two + INTERVAL '1 month' WHERE date_notify_two <= CURRENT_DATE AND auto_renewal = TRUE",
+		"UPDATE subscriptions SET date_notify_three = date_notify_three + INTERVAL '1 month' WHERE date_notify_three <= CURRENT_DATE AND auto_renewal = TRUE",
 	}
 
 	for _, q := range queries {

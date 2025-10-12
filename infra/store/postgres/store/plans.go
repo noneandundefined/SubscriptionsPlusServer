@@ -22,6 +22,9 @@ func (s *PlanStore) Get_Plans(ctx context.Context) (*[]models.Plan, error) {
 			id,
 			name,
 			price,
+			currency,
+			auto_renewal_subscriptions,
+			email_notification_subscriptions,
 			max_total_subscriptions,
 			auto_find_subscriptions
 		FROM plans
@@ -47,6 +50,9 @@ func (s *PlanStore) Get_Plans(ctx context.Context) (*[]models.Plan, error) {
 			&plan.ID,
 			&plan.Name,
 			&plan.Price,
+			&plan.Currency,
+			&plan.AutoRenewalSubscriptions,
+			&plan.EmailNotificationSubscriptions,
 			&plan.MaxTotalSubscriptions,
 			&plan.AutoFindSubscriptions,
 		)
@@ -73,6 +79,10 @@ func (s *PlanStore) Get_PlanById(ctx context.Context, id uint64) (*models.Plan, 
 			id,
 			name,
 			price,
+			currency,
+			billing_period,
+			auto_renewal_subscriptions,
+			email_notification_subscriptions,
 			max_total_subscriptions,
 			auto_find_subscriptions
 		FROM plans
@@ -88,6 +98,10 @@ func (s *PlanStore) Get_PlanById(ctx context.Context, id uint64) (*models.Plan, 
 		&plan.ID,
 		&plan.Name,
 		&plan.Price,
+		&plan.Currency,
+		&plan.BillingPeriod,
+		&plan.AutoRenewalSubscriptions,
+		&plan.EmailNotificationSubscriptions,
 		&plan.MaxTotalSubscriptions,
 		&plan.AutoFindSubscriptions,
 	); err != nil {
@@ -109,6 +123,10 @@ func (s *PlanStore) Get_PlanByUserSubUuid(ctx context.Context, uuid string) (*mo
 			plans.id,
 			plans.name,
 			plans.price,
+			plans.currency,
+			plans.billing_period,
+			plans.auto_renewal_subscriptions,
+			plans.email_notification_subscriptions,
 			plans.max_total_subscriptions,
 			plans.auto_find_subscriptions
 		FROM plans
@@ -126,6 +144,10 @@ func (s *PlanStore) Get_PlanByUserSubUuid(ctx context.Context, uuid string) (*mo
 		&plan.ID,
 		&plan.Name,
 		&plan.Price,
+		&plan.Currency,
+		&plan.BillingPeriod,
+		&plan.AutoRenewalSubscriptions,
+		&plan.EmailNotificationSubscriptions,
 		&plan.MaxTotalSubscriptions,
 		&plan.AutoFindSubscriptions,
 	); err != nil {

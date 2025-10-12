@@ -6,10 +6,10 @@ type Transaction struct {
 	ID        uint64    `json:"id" db:"id"`
 	CreatedAt time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
-	EndedAt   time.Time `json:"ended_at" db:"ended_at"`
-	PlanID    int       `json:"plan_id,omitempty" db:"plan_id"`
 	UserUUID  string    `json:"user_uuid" db:"user_uuid"`
+	PlanID    int       `json:"plan_id,omitempty" db:"plan_id"`
+	Status    string    `json:"status" db:"status"`
 	XToken    string    `json:"x_token" db:"x_token"`
 	Amount    float64   `json:"amount" db:"amount"`
-	Status    string    `json:"status" db:"status"` // pending, success, failed
+	Currency  string    `json:"currency" db:"currency"`
 }

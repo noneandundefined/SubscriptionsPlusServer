@@ -13,4 +13,5 @@ type Subscription struct {
 	DateNotifyOne   *time.Time `json:"date_notify_one,omitempty" db:"date_notify_one"`
 	DateNotifyTwo   *time.Time `json:"date_notify_two,omitempty" db:"date_notify_two"`
 	DateNotifyThree *time.Time `json:"date_notify_three,omitempty" db:"date_notify_three"`
+	AutoRenewal     bool       `json:"auto_renewal" db:"auto_renewal"`
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func (h *Handler) SubscriptionGetByXToken(w http.ResponseWriter, r *http.Request) error {
+func (h *Handler) SubscriptionGetByXTokenHandler(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 	authToken := ctx.Value("identity").(*types.AuthToken)
 

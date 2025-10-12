@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS user_cores (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     user_uuid VARCHAR(255) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
-    token VARCHAR(255) NOT NULL UNIQUE
+    access_token VARCHAR(255) NOT NULL UNIQUE,
+    refresh_token VARCHAR(255) UNIQUE
 );
 
 CREATE OR REPLACE FUNCTION set_updated_at_user_cores()
@@ -27,7 +28,8 @@ COMMENT ON COLUMN user_cores.created_at IS 'Record creation timestamp';
 COMMENT ON COLUMN user_cores.updated_at IS 'Record last update timestamp';
 COMMENT ON COLUMN user_cores.user_uuid IS 'Uuid of the user';
 COMMENT ON COLUMN user_cores.email IS 'User email address (unique)';
-COMMENT ON COLUMN user_cores.token IS 'Hashed user token';
+COMMENT ON COLUMN user_cores.access_token IS 'Hashed user token';
+COMMENT ON COLUMN user_cores.refresh_token IS 'Hashed user token';
 -- +goose StatementEnd
 
 -- +goose Down

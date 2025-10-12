@@ -28,7 +28,7 @@ type responseWriter struct {
 
 func (l *Logger) getCurrentLogDir() string {
 	dateFormatFolder := time.Now().Format("02.01")
-	dir := filepath.Join(os.Getenv("LOG_DIR"), "logs", dateFormatFolder)
+	dir := filepath.Join(os.Getenv("LOG_DIR"), "reslogs", dateFormatFolder)
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		l.logger.Error(err.Error())
 	}
