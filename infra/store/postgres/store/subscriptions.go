@@ -100,7 +100,7 @@ func (s *SubscriptionStore) Get_SubscriptionsByUuid(ctx context.Context, uuid, s
 		paramIndex++
 	}
 
-	query += fmt.Sprintf(" ORDER BY created_at DESC LIMIT $%d", paramIndex)
+	query += fmt.Sprintf(" ORDER BY date_pay ASC LIMIT $%d", paramIndex)
 
 	args = append(args, maxLimit)
 
@@ -150,15 +150,15 @@ func (s *SubscriptionStore) Get_SubscriptionsByUuid(ctx context.Context, uuid, s
 
 func (s *SubscriptionStore) Update_SubscriptionById(ctx context.Context, sub *models.Subscription, id int) error {
 	query := `
-		UPDATE subscriptions 
-		SET 
-		    name = $1, 
-		    price = $2, 
-		    date_pay = $3, 
-		    date_notify_one = $4, 
-		    date_notify_two = $5, 
-		    date_notify_three = $6, 
-		    auto_renewal = $7 
+		UPDATE subscriptions
+		SET
+		    name = $1,
+		    price = $2,
+		    date_pay = $3,
+		    date_notify_one = $4,
+		    date_notify_two = $5,
+		    date_notify_three = $6,
+		    auto_renewal = $7
 		WHERE id = $8 AND user_uuid = $9
 	`
 
