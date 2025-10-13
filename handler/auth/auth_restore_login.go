@@ -20,7 +20,6 @@ func (h *Handler) AuthRestoreLoginHandler(w http.ResponseWriter, r *http.Request
 	decrypted, err := encryption.Decrypt(token)
 	if err != nil {
 		h.Logger.Error("failed to decrypt token: %v", err)
-
 		return httperr.Conflict("")
 	}
 
@@ -56,6 +55,10 @@ func (h *Handler) AuthRestoreLoginHandler(w http.ResponseWriter, r *http.Request
 	user, err := h.Store.Users.Get_UserCoreByEmail(ctx, email)
 	if err != nil {
 		h.Logger.Error("%v", err)
+		return httperr.Conflict("")
+	}
+
+	if user == nil {
 		return httperr.Conflict("")
 	}
 

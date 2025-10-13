@@ -1,12 +1,16 @@
 package transaction
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 	"subscriptionplus/server/infra/store/postgres/models"
 	"subscriptionplus/server/infra/types"
+	"subscriptionplus/server/pkg/botx"
 	"subscriptionplus/server/pkg/httpx"
 	"subscriptionplus/server/pkg/httpx/httperr"
 	"subscriptionplus/server/util"
+	"time"
 
 	"github.com/go-playground/validator"
 )
@@ -69,6 +73,21 @@ func (h *Handler) SubscriptionPayHandler(w http.ResponseWriter, r *http.Request)
 		h.Logger.Error("%v", err)
 		return httperr.Db(ctx, err)
 	}
+
+	// bot
+	date := time.Now().Format("2006-01-02 15:04:05")
+
+	amountStr := strconv.FormatFloat(plan.Price, 'f', 2, 64)
+
+	message := fmt.Sprintf(
+		"New Transaction in app %s\n\nuuid: %s\namount: %s\nxtoken: %s",
+		botx.EscapeMarkdownV2(date),
+		botx.EscapeMarkdownV2(authToken.User.UserUUID),
+		botx.EscapeMarkdownV2(amountStr),
+		botx.EscapeMarkdownV2(xtoken),
+	)
+
+	go botx.Send(message)
 
 	httpx.HttpResponse(w, r, http.StatusCreated, xtoken)
 	return nil

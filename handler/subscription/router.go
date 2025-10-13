@@ -30,5 +30,5 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	subRouter.Handle("/{id:[0-9]+}", httpx.ErrorHandler(h.DeleteSubscriptionsHandler)).Methods(http.MethodDelete)
 
 	// access: все
-	subFreeRouter.Handle("/images/w350/{logo}", httpx.ErrorHandler(h.GetSubscriptionLogoHandler)).Methods(http.MethodGet)
+	subFreeRouter.Handle("/images/w350", httpx.ErrorHandler(h.GetSubscriptionLogoHandler)).Methods(http.MethodGet)
 }
