@@ -127,6 +127,54 @@ var SubscriptionImages = []SubscriptionImage{
 	{Keywords: []string{
 		"megafon", "mega fon", "мегафон", "мегафон подписка", "megafon подписка",
 	}, Image: "megafon.png"},
+
+	// Dom.ru
+	{
+		Keywords: []string{"dom.ru", "дом ру", "дом.ру", "dom ru", "интернет dom.ru", "тв dom.ru"},
+		Image:    "domru.png",
+	},
+
+	// Ozon Premium
+	{
+		Keywords: []string{"ozon", "ozon premium", "ozon подписка", "озон", "озон премиум"},
+		Image:    "ozon.png",
+	},
+
+	// Wildberries Plus
+	{
+		Keywords: []string{"wb", "wildberries", "wildberries plus", "wb подписка", "вб", "вб премиум"},
+		Image:    "wb.png",
+	},
+
+	// Транспортная карта
+	{
+		Keywords: []string{"transport card", "транспортная карта"},
+		Image:    "buscard.png",
+	},
+
+	// GeekBrains
+	{
+		Keywords: []string{"geekbrains", "geekbrains курс", "geekbrains обучение", "гикбрейнс"},
+		Image:    "geekbrains.png",
+	},
+
+	// Stepik
+	{
+		Keywords: []string{"stepik", "stepik курс", "stepik обучение", "степик"},
+		Image:    "stepik.jpg",
+	},
+
+	// Samokat
+	{
+		Keywords: []string{"samokat", "самокат", "samokat доставка", "самокат доставка"},
+		Image:    "samokat.png",
+	},
+
+	// VK / VK Video
+	{
+		Keywords: []string{"vk", "вк", "vk video", "вк видео", "vk подписка", "вк премиум"},
+		Image:    "vk.png",
+	},
 }
 
 func (nlp *NLPBuilder) GetSubscriptionImage(input string) string {
