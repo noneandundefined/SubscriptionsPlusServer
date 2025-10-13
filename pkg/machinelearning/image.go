@@ -110,6 +110,23 @@ var SubscriptionImages = []SubscriptionImage{
 	{Keywords: []string{"chatgpt", "gpt plus", "chat gpt+", "openai plus", "чатгпт подписка", "openai"}, Image: "chatgpt.png"},
 	{Keywords: []string{"midjourney", "mid journey", "midjourney подписка"}, Image: "midjourney.jpg"},
 	{Keywords: []string{"claude", "anthropic", "claude ai", "claude подписка"}, Image: "claude.jpg"},
+	{Keywords: []string{
+		"mts", "mts подписка", "мтс", "мтс подписка", "mts premium",
+	}, Image: "mts.jpg"},
+
+	// Beeline
+	{Keywords: []string{
+		"beeline", "beeline подписка", "билайн", "билайн подписка", "beeline premium",
+	}, Image: "beeline.png"},
+
+	{Keywords: []string{
+		"t2", "t2 подписка", "t2 premium", "т2", "т2 подписка",
+	}, Image: "t2.png"},
+
+	// MegaFon
+	{Keywords: []string{
+		"megafon", "mega fon", "мегафон", "мегафон подписка", "megafon подписка",
+	}, Image: "megafon.png"},
 }
 
 func (nlp *NLPBuilder) GetSubscriptionImage(input string) string {
