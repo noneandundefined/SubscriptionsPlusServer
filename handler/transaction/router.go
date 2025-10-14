@@ -20,6 +20,9 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	subscriptionPayRouter.Handle("/subscription/pay", httpx.ErrorHandler(h.SubscriptionPayHandler)).Methods(http.MethodPost)
 
 	// access: все
+	subscriptionPayRouter.Handle("/subscription/status/paid", httpx.ErrorHandler(h.SubscriptionWaitCheckHandler)).Methods(http.MethodPost)
+
+	// access: все
 	subscriptionPayRouter.Handle("/subscription/id/{id:[0-9]+}", httpx.ErrorHandler(h.SubscriptionGetByIdHandler)).Methods(http.MethodGet)
 
 	// access: все

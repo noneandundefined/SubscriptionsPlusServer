@@ -9,7 +9,7 @@ import (
 func (h *Handler) SubscriptionsPendingHandler(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 
-	subs, err := h.Store.Transactions.Get_TransactionsByStatus(ctx, "pending")
+	subs, err := h.Store.Transactions.Get_TransactionsByStatus(ctx, "paid")
 	if err != nil {
 		h.Logger.Error("%v", err)
 		return httperr.Db(ctx, err)

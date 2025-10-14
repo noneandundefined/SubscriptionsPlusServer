@@ -36,14 +36,14 @@ func (s *TransactionStore) Get_TransactionsByUuid(ctx context.Context, uuid stri
 	transactions := []models.Transaction{}
 
 	query := `
-		SELECT 
-		    id, 
-		    created_at, 
-		    user_uuid, 
-		    plan_id, 
-		    status, 
-		    x_token, 
-		   	amount, 
+		SELECT
+		    id,
+		    created_at,
+		    user_uuid,
+		    plan_id,
+		    status,
+		    x_token,
+		   	amount,
 		    currency
 		FROM transactions
 		WHERE user_uuid = $1
@@ -95,7 +95,7 @@ func (s *TransactionStore) Get_TransactionPendingByUuid(ctx context.Context, uui
 	transaction := models.Transaction{}
 
 	query := `
-		SELECT * FROM transactions WHERE status = 'pending' AND user_uuid = $1 LIMIT 1
+		SELECT * FROM transactions WHERE status = 'pending' OR status = 'paid' AND user_uuid = $1 LIMIT 1
 	`
 
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
@@ -177,13 +177,13 @@ func (s *TransactionStore) Get_TransactionsSubscriptionById(ctx context.Context,
 	transaction := models.Transaction{}
 
 	query := `
-		SELECT 
-		    id, 
-		    created_at, 
+		SELECT
+		    id,
+		    created_at,
 		    plan_id,
 		    status,
-		    user_uuid, 
-		    x_token, 
+		    user_uuid,
+		    x_token,
 		    amount,
 		    currency
 		FROM transactions
@@ -220,13 +220,13 @@ func (s *TransactionStore) Get_TransactionsSubscriptionByXToken(ctx context.Cont
 	transaction := models.Transaction{}
 
 	query := `
-		SELECT 
-		    id, 
-		    created_at, 
+		SELECT
+		    id,
+		    created_at,
 		    plan_id,
 		    status,
-		    user_uuid, 
-		    x_token, 
+		    user_uuid,
+		    x_token,
 		    amount,
 		    currency
 		FROM transactions
@@ -296,7 +296,7 @@ func (s *TransactionStore) AutoActivateExpiredTransactions(ctx context.Context) 
 
 	query1 := `
         UPDATE transactions SET status = 'success', updated_at = NOW()
-        WHERE status = 'pending' AND created_at < NOW() - INTERVAL '1 hour'
+        WHERE status = 'pending' OR status = 'paid' AND created_at < NOW() - INTERVAL '1 hour'
         RETURNING user_uuid, plan_id
     `
 

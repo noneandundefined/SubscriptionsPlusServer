@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS transactions (
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     user_uuid VARCHAR(255) NOT NULL REFERENCES user_cores(user_uuid) ON DELETE CASCADE,
     plan_id INTEGER NOT NULL DEFAULT 2 REFERENCES plans(id),
-    status TEXT CHECK (status IN ('success', 'pending', 'failed')) DEFAULT 'pending',
+    status TEXT CHECK (status IN ('success', 'pending', 'failed', 'paid')) DEFAULT 'pending',
     x_token VARCHAR(255) NOT NULL,
     amount NUMERIC(10, 2) NOT NULL,
     currency TEXT DEFAULT 'RUB'
