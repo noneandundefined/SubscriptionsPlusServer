@@ -261,7 +261,7 @@ func (s *TransactionStore) Get_TransactionsSubscriptionByXToken(ctx context.Cont
 
 func (s *TransactionStore) Update_TransactionStatusById(tx *sql.Tx, ctx context.Context, status string, id uint64) error {
 	query := `
-		UPDATE transactions SET status = $1 WHERE id = $2 AND status = 'pending'
+		UPDATE transactions SET status = $1 WHERE id = $2 AND status = 'pending' OR status = 'paid'
 	`
 
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
