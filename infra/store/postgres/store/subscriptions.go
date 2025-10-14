@@ -148,6 +148,73 @@ func (s *SubscriptionStore) Get_SubscriptionsByUuid(ctx context.Context, uuid, s
 	return &subscriptions, nil
 }
 
+func (s *SubscriptionStore) Get_SubscriptionsForNotify(ctx context.Context) (*[]models.Subscription, error) {
+	subs := []models.Subscription{}
+
+	query := `
+		SELECT
+			id,
+			user_uuid,
+			name,
+			price,
+			date_pay,
+			date_notify_one,
+			date_notify_two,
+			date_notify_three,
+			auto_renewal
+		FROM subscriptions
+		WHERE (
+			notify_date_one = CURRENT_DATE OR notify_day_two = CURRENT_DATE OR notify_day_three = CURRENT_DATE OR (
+				notify_date_one IS NULL
+				AND notify_day_two IS NULL
+				AND notify_day_three IS NULL
+				AND date_pay - INTERVAL '3 days' = CURRENT_DATE
+			)
+		);
+	`
+
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	rows, err := s.db.QueryContext(ctx, query)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var sub models.Subscription
+
+		err := rows.Scan(
+			&sub.ID,
+			&sub.UserUUID,
+			&sub.Name,
+			&sub.Price,
+			&sub.DatePay,
+			&sub.DateNotifyOne,
+			&sub.DateNotifyTwo,
+			&sub.DateNotifyThree,
+			&sub.AutoRenewal,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		subs = append(subs, sub)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return &subs, nil
+}
+
 func (s *SubscriptionStore) Update_SubscriptionById(ctx context.Context, sub *models.Subscription, id int) error {
 	query := `
 		UPDATE subscriptions

@@ -5,6 +5,7 @@ import (
 	"subscriptionplus/server/handler"
 	"subscriptionplus/server/handler/admin"
 	"subscriptionplus/server/handler/auth"
+	"subscriptionplus/server/handler/notification"
 	"subscriptionplus/server/handler/plan"
 	"subscriptionplus/server/handler/subscription"
 	"subscriptionplus/server/handler/transaction"
@@ -47,6 +48,8 @@ func (s *httpServer) routes() http.Handler {
 	transaction.NewHandler(baseHandler).RegisterRoutes(subrouter)
 	// plan
 	plan.NewHandler(baseHandler).RegisterRoutes(subrouter)
+	// notification
+	notification.NewHandler(baseHandler).RegisterRoutes(subrouter)
 
 	// docs
 	s.docs(subrouter)

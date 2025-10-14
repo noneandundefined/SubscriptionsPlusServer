@@ -46,6 +46,7 @@ func main() {
 
 	// cron
 	server.startCronUpdSubscriptions()
+	server.startCronSubscriptionNotifications()
 	server.startCronUpdUserSubscriptionBeforEndSub()
 	server.startCronAutoActivateExpiredTransactions()
 

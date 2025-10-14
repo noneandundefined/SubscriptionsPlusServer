@@ -110,7 +110,13 @@ func SecurityMiddleware() mux.MiddlewareFunc {
 			}
 
 			// check headers
-			for _, values := range r.Header {
+			for key, values := range r.Header {
+				if strings.EqualFold(key, "Authorization") ||
+					strings.EqualFold(key, "User-Agent") ||
+					strings.EqualFold(key, "Accept") {
+					continue
+				}
+
 				for _, val := range values {
 					if isMalicious(val) {
 						httpx.HttpResponse(w, r, http.StatusBadRequest, "malicious content")

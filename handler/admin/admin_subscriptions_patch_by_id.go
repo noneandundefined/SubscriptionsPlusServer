@@ -7,6 +7,7 @@ import (
 	"subscriptionplus/server/infra/store/postgres/models"
 	"subscriptionplus/server/pkg/httpx"
 	"subscriptionplus/server/pkg/httpx/httperr"
+	"subscriptionplus/server/pkg/notify"
 
 	"github.com/go-playground/validator"
 	"github.com/gorilla/mux"
@@ -53,6 +54,12 @@ func (h *Handler) SubscriptionsPatchByIdHandler(w http.ResponseWriter, r *http.R
 		return nil
 	}
 
+	userNotifyToken, err := h.Store.Notifications.Get_NotificationTokenByUuid(ctx, payload.UserUuid)
+	if err != nil {
+		h.Logger.Error("%v", err)
+		return httperr.Db(ctx, err)
+	}
+
 	tx, err := h.Db.BeginTx(ctx, nil)
 	if err != nil {
 		h.Logger.Error("%v", err)
@@ -77,6 +84,10 @@ func (h *Handler) SubscriptionsPatchByIdHandler(w http.ResponseWriter, r *http.R
 			return httperr.Db(ctx, err)
 		}
 
+		if err := notify.SendPushNotification(userNotifyToken.Token, "Subscription receipt error", "Unfortunately, we were unable to subscribe. Please try again."); err != nil {
+			h.Logger.Error("%v", err)
+		}
+
 		httpx.HttpResponse(w, r, http.StatusOK, "Status successfully updated to failed!")
 		return nil
 
@@ -99,6 +110,10 @@ func (h *Handler) SubscriptionsPatchByIdHandler(w http.ResponseWriter, r *http.R
 		if err := tx.Commit(); err != nil {
 			h.Logger.Error("%v", err)
 			return httperr.Db(ctx, err)
+		}
+
+		if err := notify.SendPushNotification(userNotifyToken.Token, "Subscription completed", "Your subscription has been activated. Thank you for staying with us."); err != nil {
+			h.Logger.Error("%v", err)
 		}
 
 		httpx.HttpResponse(w, r, http.StatusOK, "Status successfully updated to success!")

@@ -32,6 +32,7 @@ type Storage struct {
 
 		Get_SubscriptionsByUuid(ctx context.Context, uuid string, search string) (*[]models.Subscription, error)
 		Get_SubscriptionById(ctx context.Context, id uint64, uuid string) (*models.Subscription, error)
+		Get_SubscriptionsForNotify(ctx context.Context) (*[]models.Subscription, error)
 
 		Update_SubscriptionsMounth(ctx context.Context) error
 		Update_SubscriptionById(ctx context.Context, sub *models.Subscription, id int) error
@@ -55,6 +56,11 @@ type Storage struct {
 		Get_PlanById(ctx context.Context, id uint64) (*models.Plan, error)
 		Get_PlanByUserSubUuid(ctx context.Context, uuid string) (*models.Plan, error)
 	}
+	Notifications interface {
+		Create_NotificationToken(ctx context.Context, notify *models.NotificationToken) error
+		Get_NotificationTokenByUuid(ctx context.Context, uuid string) (*models.NotificationToken, error)
+		Update_NotificationTokenByUuid(ctx context.Context, notify *models.NotificationToken) error
+	}
 }
 
 func NewStorage(db *sql.DB, logger *logger.Logger) Storage {
@@ -63,6 +69,7 @@ func NewStorage(db *sql.DB, logger *logger.Logger) Storage {
 		Subscriptions: &SubscriptionStore{db, logger},
 		Transactions:  &TransactionStore{db, logger},
 		Plans:         &PlanStore{db, logger},
+		Notifications: &NotificationStore{db, logger},
 	}
 }
 
