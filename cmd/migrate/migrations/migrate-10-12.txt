@@ -1,6 +1,0 @@
-ALTER TABLE user_cores RENAME COLUMN token TO access_token;
-ALTER TABLE user_cores ADD COLUMN refresh_token VARCHAR(255) UNIQUE;
-
-ALTER TABLE plans
-ADD COLUMN auto_renewal_subscriptions BOOLEAN DEFAULT FALSE,
-ADD COLUMN email_notification_subscriptions BOOLEAN DEFAULT FALSE;
