@@ -15,7 +15,7 @@ func SendPushNotification(token, title, message string) error {
 	}
 	body, _ := config.JSON.Marshal(msg)
 
-	resp, err := http.Post("https://exp.host/--/api/v2/push/send", "application/json", bytes.NewBuffer(body))
+	resp, err := http.Post("https://api.expo.dev/v2/push/send", "application/json", bytes.NewBuffer(body))
 	if err != nil {
 		return err
 	}
