@@ -175,6 +175,12 @@ var SubscriptionImages = []SubscriptionImage{
 		Keywords: []string{"vk", "вк", "vk video", "вк видео", "vk подписка", "вк премиум"},
 		Image:    "vk.png",
 	},
+
+	// VK / VK Video
+	{
+		Keywords: []string{"перевод", "переводы", "должен", "займ", "кредит"},
+		Image:    "money.png",
+	},
 }
 
 func (nlp *NLPBuilder) GetSubscriptionImage(input string) string {
