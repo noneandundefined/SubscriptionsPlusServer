@@ -75,14 +75,14 @@ func (s *UserStore) Get_UserCoreByAccessToken(ctx context.Context, access_token 
 	user := models.UserCore{}
 
 	query := `
-		SELECT 
+		SELECT
 		    id,
 		    user_uuid,
 		    email,
-		    access_token, 
-		    refresh_token 
-		FROM user_cores 
-		WHERE access_token = $1 
+		    access_token,
+		    refresh_token
+		FROM user_cores
+		WHERE access_token = $1
 		LIMIT 1
 	`
 
@@ -106,14 +106,14 @@ func (s *UserStore) Get_UserCoreByUuid(ctx context.Context, uuid string) (*model
 	user := models.UserCore{}
 
 	query := `
-		SELECT 
-		    id, 
-		    user_uuid, 
-		    email, 
-		    access_token, 
-		    refresh_token 
-		FROM user_cores 
-		WHERE user_uuid = $1 
+		SELECT
+		    id,
+		    user_uuid,
+		    email,
+		    access_token,
+		    refresh_token
+		FROM user_cores
+		WHERE user_uuid = $1
 		LIMIT 1
 	`
 
@@ -137,14 +137,14 @@ func (s *UserStore) Get_UserCoreByEmail(ctx context.Context, email string) (*mod
 	user := models.UserCore{}
 
 	query := `
-		SELECT 
-		    id, 
-		    user_uuid, 
-		    email, 
-		    access_token, 
-		    refresh_token 
-		FROM user_cores 
-		WHERE email = $1 
+		SELECT
+		    id,
+		    user_uuid,
+		    email,
+		    access_token,
+		    refresh_token
+		FROM user_cores
+		WHERE email = $1
 		LIMIT 1
 	`
 
@@ -450,7 +450,7 @@ func (s *UserStore) Update_UserSubscriptionBeforEndSub(ctx context.Context) erro
 		SET
 			is_active = false,
 			plan_id = 2
-        WHERE end_day < CURRENT_DATE AND is_active = true
+        WHERE end_date < CURRENT_DATE AND is_active = true
 	`
 
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
